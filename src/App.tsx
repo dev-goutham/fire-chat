@@ -1,7 +1,8 @@
 import React from 'react'
+import Login from './components/Login'
 
 const App: React.FC = () => {
-	return <div>Hello</div>
+	return <Login />
 }
 
 export default App
