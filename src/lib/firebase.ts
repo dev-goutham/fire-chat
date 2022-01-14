@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
+import { collection, getFirestore } from 'firebase/firestore'
 import { getStorage, ref } from 'firebase/storage'
 
 export const firebaseApp = initializeApp({
@@ -15,6 +15,8 @@ export const firebaseApp = initializeApp({
 export const auth = getAuth(firebaseApp)
 export const authProvider = new GoogleAuthProvider()
 export const firestore = getFirestore(firebaseApp)
+export const usersCollection = collection(firestore, 'users')
+export const roomsCollection = collection(firestore, 'rooms')
 const storage = getStorage(firebaseApp)
 export const imagesStorage = ref(storage, 'images')
 export const audiosStorage = ref(storage, 'audios')

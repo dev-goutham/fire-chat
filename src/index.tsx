@@ -1,23 +1,25 @@
 import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import WebFont from 'webfontloader'
+import 'index.css'
 
 import App from './App'
-import GlobalStyles from './lib/GlobalStyles'
+import { AuthProvider } from 'store'
 
 const Index: React.FC = () => {
 	useEffect(() => {
 		WebFont.load({
 			google: {
-				families: ['Quicksand'],
+				families: ['Quicksand', 'Merriweather'],
 			},
 		})
 	}, [])
 
 	return (
 		<React.StrictMode>
-			<GlobalStyles />
-			<App />
+			<AuthProvider>
+				<App />
+			</AuthProvider>
 		</React.StrictMode>
 	)
 }
