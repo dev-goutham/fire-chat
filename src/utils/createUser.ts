@@ -1,6 +1,5 @@
-import { User } from 'firebase/auth'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { firestore } from 'lib/firebase'
+import { User } from '@firebase/auth-types'
+import { db } from 'lib/firebase'
 
 export const createUser = async ({
 	uid,
@@ -11,23 +10,17 @@ export const createUser = async ({
 	success: boolean
 }> => {
 	try {
-		const docRef = doc(firestore, 'users', uid)
+		const res = await db.collection('users').doc(uid).get()
 
-		const doesExist = (await getDoc(docRef)).exists()
-
-		if (!doesExist) {
-			await setDoc(docRef, {
+		if (!res.exists) {
+			await db.collection('users').doc(uid).set({
 				name,
 				email,
 				photoURL,
-				rooms: [
-					{
-						name: 'General',
-						id: 'c8K8Kr8q7WkC0373G0Mt',
-					},
-				],
+				is_online: true,
 			})
 		}
+
 		return { success: true }
 	} catch (error) {
 		console.error(error)

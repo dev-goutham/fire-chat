@@ -1,4 +1,4 @@
-import { AuthError as IError, User } from 'firebase/auth'
+import { User } from '@firebase/auth-types'
 
 type IUser = User
 
@@ -29,12 +29,12 @@ class AuthStateChanged implements IAction {
 class AuthError implements IAction {
 	readonly type = 'AUTH_ERROR'
 
-	constructor(public payload: IAuthContext['error']) {}
+	constructor(public payload: string | null) {}
 }
 
 export type AuthReducerState = {
 	user: IUser | null
-	error: IAuthContext['error']
+	error: string | null
 	fetching: boolean
 }
 

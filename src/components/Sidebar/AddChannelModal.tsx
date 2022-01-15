@@ -11,16 +11,18 @@ export const AddCannelModal: React.FC<{
 	onUnmount: (fn: () => unknown) => unknown
 }> = ({ isOpen, closeModal, onUnmount }) => {
 	const { user } = useAuth()
-	const inputRef = useRef<HTMLInputElement | null>(null)
+	const channelNameRef = useRef<HTMLInputElement | null>(null)
+	const channelDescRef = useRef<HTMLInputElement | null>(null)
 
 	const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
 		e.preventDefault()
-		if (!inputRef.current) {
+		if (!channelNameRef.current || !channelDescRef.current) {
 			closeModal()
 			return
 		}
 		createAndSubscribeToRoom({
-			roomName: inputRef.current.value,
+			roomName: channelNameRef.current.value,
+			roomDesc: channelDescRef.current.value,
 			uid: user?.uid as unknown as string,
 		})
 			.then(() => {
@@ -51,7 +53,13 @@ export const AddCannelModal: React.FC<{
 						className="w-full px-2 py-4 mb-4 text-gray-900 rounded-lg"
 						type="text"
 						placeholder="channel name"
-						ref={inputRef}
+						ref={channelNameRef}
+					/>
+					<input
+						className="w-full px-2 py-4 mb-4 text-gray-900 rounded-lg"
+						type="text"
+						placeholder="channel description"
+						ref={channelDescRef}
 					/>
 					<button
 						className="block w-full py-4 bg-green-600 rounded-lg"

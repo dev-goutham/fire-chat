@@ -1,22 +1,18 @@
-import { initializeApp } from 'firebase/app'
-import { getAuth, GoogleAuthProvider } from 'firebase/auth'
-import { collection, getFirestore } from 'firebase/firestore'
-import { getStorage, ref } from 'firebase/storage'
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+import 'firebase/auth'
 
-export const firebaseApp = initializeApp({
+export const firebaseApp = {
 	apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
 	authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
 	databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
 	projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
 	storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
 	appId: process.env.REACT_APP_FIREBASE_APP_ID,
-})
+}
 
-export const auth = getAuth(firebaseApp)
-export const authProvider = new GoogleAuthProvider()
-export const firestore = getFirestore(firebaseApp)
-export const usersCollection = collection(firestore, 'users')
-export const roomsCollection = collection(firestore, 'rooms')
-const storage = getStorage(firebaseApp)
-export const imagesStorage = ref(storage, 'images')
-export const audiosStorage = ref(storage, 'audios')
+firebase.initializeApp(firebaseApp)
+
+export const db = firebase.firestore()
+export const auth = firebase.auth()
+export const GoogleProvider = new firebase.auth.GoogleAuthProvider()

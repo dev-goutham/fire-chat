@@ -1,11 +1,9 @@
-import { signOut as firebaseSignOut, onAuthStateChanged } from 'firebase/auth'
-import { auth } from 'lib/firebase'
+import { auth, db } from 'lib/firebase'
 import React, { createContext, useCallback, useEffect } from 'react'
 import { useAuthReducer } from './reducer'
 import { IAuthContext } from './types'
 import { signInWithGoogle } from 'utils/signInWithGoogle'
 import { createUser } from 'utils/createUser'
-import { getUser } from 'utils/getUser'
 
 const AuthContext = createContext<IAuthContext>({
 	error: null,
@@ -24,14 +22,18 @@ const AuthProvider: React.FC = ({ children }) => {
 
 	const signIn = useCallback(async () => {
 		try {
-			const { success, error: signinError } = await signInWithGoogle()
+			const { success, user } = await signInWithGoogle()
 
 			if (!success) {
 				dispatch({
 					type: 'AUTH_ERROR',
-					payload: signinError,
+					payload: 'something went wronf',
 				})
 			}
+
+			await db.collection('users').doc(user?.uid).update({
+				is_online: true,
+			})
 		} catch (error) {
 			dispatch({
 				type: 'AUTH_ERROR',
@@ -41,11 +43,14 @@ const AuthProvider: React.FC = ({ children }) => {
 	}, [dispatch, signInWithGoogle, createUser])
 
 	const signOut = async () => {
-		await firebaseSignOut(auth)
+		await auth.signOut()
+		await db.collection('users').doc(state.user?.uid).update({
+			is_online: false,
+		})
 	}
 
 	useEffect(() => {
-		const unsub = onAuthStateChanged(auth, (user) => {
+		const unsub = auth.onAuthStateChanged((user) => {
 			if (!user) {
 				dispatch({
 					type: 'AUTH_STATE_CHANGED',
@@ -56,12 +61,6 @@ const AuthProvider: React.FC = ({ children }) => {
 			if (user) {
 				createUser(user)
 					.then(() => {
-						// getUser(user.uid).then((u) => {
-						// 	dispatch({
-						// 		type: 'AUTH_STATE_CHANGED',
-						// 		payload: u!,
-						// 	})
-						// })
 						dispatch({
 							type: 'AUTH_STATE_CHANGED',
 							payload: user,
@@ -76,7 +75,7 @@ const AuthProvider: React.FC = ({ children }) => {
 			}
 		})
 		return unsub
-	}, [dispatch, onAuthStateChanged])
+	}, [dispatch])
 
 	return (
 		<AuthContext.Provider

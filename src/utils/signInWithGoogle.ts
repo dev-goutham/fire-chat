@@ -1,5 +1,5 @@
-import { User, AuthError, signInWithPopup } from 'firebase/auth'
-import { auth, authProvider } from 'lib/firebase'
+import { User, AuthError } from '@firebase/auth-types'
+import { auth, GoogleProvider } from 'lib/firebase'
 
 export const signInWithGoogle = async (): Promise<{
 	success: boolean
@@ -7,7 +7,7 @@ export const signInWithGoogle = async (): Promise<{
 	error: AuthError | null
 }> => {
 	try {
-		const { user } = await signInWithPopup(auth, authProvider)
+		const { user } = await auth.signInWithPopup(GoogleProvider)
 		return {
 			success: true,
 			user,
